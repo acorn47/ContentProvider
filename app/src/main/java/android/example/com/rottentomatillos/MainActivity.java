@@ -16,22 +16,34 @@
 package android.example.com.rottentomatillos;
 
 import android.content.ContentValues;
+import android.database.sqlite.SQLiteConstraintException;
 import android.database.sqlite.SQLiteDatabase;
 import android.example.com.rottentomatillos.data.TomatilloContract.Movie;
 import android.example.com.rottentomatillos.data.TomatilloDBHelper;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 
 /**
  * This is the main activity for the RottenTomatillos App.
  */
 public class MainActivity extends ActionBarActivity {
+    public static final String LOG_TAG = MainActivity.class.getSimpleName();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        insertData();
+    }
 
+    /**
+     * Inserts dummy data into the movie rating database.
+     * To keep the code simple for this toy app we are inserting the data here.
+     * Normally this should be done on a separate thread, using {@link android.os.AsyncTask}
+     * or similar method.
+     */
+    private void insertData() {
         // Create a DBHelper
         TomatilloDBHelper dbHelper = new TomatilloDBHelper(this);
         // Get a WritableDatabase, this is when the database is actually created if it does not
@@ -43,7 +55,15 @@ public class MainActivity extends ActionBarActivity {
         values.put(Movie.TITLE, "Eternal Sunshine of the Spotless Mind");
         values.put(Movie.RATING, 5);
 
-        // Insert the Movie
-        db.insert(Movie.TABLE_NAME, null, values);
+        // Insert the Movie and catch the exception if it's already in the database.
+        try {
+            db.insertOrThrow(Movie.TABLE_NAME, null, values);
+        } catch (SQLiteConstraintException e) {
+            Log.i(LOG_TAG,
+                    "Trying to insert " + values.getAsString(Movie.TITLE) +
+                    " but it's already in the database.");
+            // Do nothing if the movie is already there.
+        }
     }
+
 }
