@@ -32,6 +32,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-    </application>
 
+        <provider
+            android:authorities="@string/content_authority"
+            android:name=".data.TomatilloProvider"
+            android:exported="false"
+            />
+
+    </application>
 </manifest>
