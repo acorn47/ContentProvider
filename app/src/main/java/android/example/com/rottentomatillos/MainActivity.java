@@ -15,12 +15,15 @@
  */
 package android.example.com.rottentomatillos;
 
+import android.content.ContentValues;
 import android.database.sqlite.SQLiteConstraintException;
 import android.database.sqlite.SQLiteDatabase;
-import android.example.com.rottentomatillos.data.TomatilloDBHelper;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
+import android.example.com.rottentomatillos.data.TomatilloDBHelper;
+import android.example.com.rottentomatillos.data.TomatilloContract.Movie;
+
 /**
  * This is the main activity for the RottenTomatillos App.
  */
@@ -47,21 +50,34 @@ public class MainActivity extends ActionBarActivity {
         // already exist.
         SQLiteDatabase db = dbHelper.getWritableDatabase();
 
-        // -- YOUR CODE BELOW HERE -- //
-
         // Create the values for 10 movies and insert them in the database
-        String[] titles = new String[] { };
-        int[] ratings = new int[] { };
+        String[] titles = new String[] {
+                "Eternal Sunshine of the Spotless Mind",
+                "Oldboy",
+                "Ponyo",
+                "Frozen",
+                "Let the Right One In",
+                "Amelie",
+                "Pan's Labyrinth",
+                "City of God",
+                "Akira",
+                "Some Like It Hot"};
+        int[] ratings = new int[]{5,5,1,2,3,5,5,4,3,4};
 
-        // Insert the movie and catch the exception if it's already in the database.
-        try {
-
-        } catch (SQLiteConstraintException e) {
-            Log.i(LOG_TAG,
-                    "Trying to insert but it's already in the database.");
-            // Do nothing if the movie is already there.
+        // Go through the arrays and make all of the movies, finally insert into the database.
+        for (int i = 0; i < titles.length; i++) {
+            ContentValues values = new ContentValues();
+            values.put(Movie.TITLE, titles[i]);
+            values.put(Movie.RATING, ratings[i]);
+            // Insert the movie and catch the exception if it's already in the database.
+            try {
+                db.insertOrThrow(Movie.TABLE_NAME, null, values);
+            } catch (SQLiteConstraintException e) {
+                Log.i(LOG_TAG,
+                        "Trying to insert " + values.getAsString(Movie.TITLE) +
+                        " but it's already in the database.");
+                // Do nothing if the movie is already there.
+            }
         }
-
     }
-
 }
