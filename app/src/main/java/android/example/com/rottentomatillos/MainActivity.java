@@ -90,15 +90,13 @@ public class MainActivity extends ActionBarActivity {
                 Movie.TABLE_NAME,
                 new String[]{Movie.TITLE, Movie.RATING},
                 null, null, null, null, null);
+
         // Try block so that we can have a "finally" block to close the cursor.
         try {
             // Note that the Title column is mapped to index 0
             // Note that the Rating column is mapped to index 1
-            while (cursor.moveToNext()) {
-                textView.append(cursor.getString(0) + " : ");
-                // Prints the correct number of stars
-                for (int i = 0; i < cursor.getInt(1); i++) textView.append("*");
-                textView.append("\n");
+            while(cursor.moveToNext()) {
+                textView.append(cursor.getString(0) + " " + cursor.getInt(1) + "/5\n");
             }
         } finally {
             // Make sure to close your cursor!
