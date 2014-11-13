@@ -15,15 +15,12 @@
  */
 package android.example.com.rottentomatillos;
 
-import android.content.ContentValues;
 import android.database.sqlite.SQLiteConstraintException;
 import android.database.sqlite.SQLiteDatabase;
-import android.example.com.rottentomatillos.data.TomatilloContract.Movie;
 import android.example.com.rottentomatillos.data.TomatilloDBHelper;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
-
 /**
  * This is the main activity for the RottenTomatillos App.
  */
@@ -50,20 +47,21 @@ public class MainActivity extends ActionBarActivity {
         // already exist.
         SQLiteDatabase db = dbHelper.getWritableDatabase();
 
-        // Create the values for one movie
-        ContentValues values = new ContentValues();
-        values.put(Movie.TITLE, "Eternal Sunshine of the Spotless Mind");
-        values.put(Movie.RATING, 5);
+        // -- YOUR CODE BELOW HERE -- //
 
-        // Insert the Movie and catch the exception if it's already in the database.
+        // Create the values for 10 movies and insert them in the database
+        String[] titles = new String[] { };
+        int[] ratings = new int[] { };
+
+        // Insert the movie and catch the exception if it's already in the database.
         try {
-            db.insertOrThrow(Movie.TABLE_NAME, null, values);
+
         } catch (SQLiteConstraintException e) {
             Log.i(LOG_TAG,
-                    "Trying to insert " + values.getAsString(Movie.TITLE) +
-                    " but it's already in the database.");
+                    "Trying to insert but it's already in the database.");
             // Do nothing if the movie is already there.
         }
+
     }
 
 }
