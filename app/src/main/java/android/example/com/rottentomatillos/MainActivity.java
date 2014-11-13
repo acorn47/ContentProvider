@@ -17,13 +17,14 @@ package android.example.com.rottentomatillos;
 
 import android.content.ContentValues;
 import android.database.sqlite.SQLiteConstraintException;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
+import android.widget.TextView;
 import android.example.com.rottentomatillos.data.TomatilloDBHelper;
 import android.example.com.rottentomatillos.data.TomatilloContract.Movie;
-import android.widget.TextView;
 
 /**
  * This is the main activity for the RottenTomatillos App.
@@ -84,5 +85,24 @@ public class MainActivity extends ActionBarActivity {
         TextView textView = (TextView)findViewById(R.id.tomatillo_text_view);
         textView.setText("");
 
+        // Read from the database only the Title and Rating columns
+        Cursor cursor = db.query(
+                Movie.TABLE_NAME,
+                new String[]{Movie.TITLE, Movie.RATING},
+                null, null, null, null, null);
+        // Try block so that we can have a "finally" block to close the cursor.
+        try {
+            // Note that the Title column is mapped to index 0
+            // Note that the Rating column is mapped to index 1
+            while (cursor.moveToNext()) {
+                textView.append(cursor.getString(0) + " : ");
+                // Prints the correct number of stars
+                for (int i = 0; i < cursor.getInt(1); i++) textView.append("*");
+                textView.append("\n");
+            }
+        } finally {
+            // Make sure to close your cursor!
+            cursor.close();
+        }
     }
 }
