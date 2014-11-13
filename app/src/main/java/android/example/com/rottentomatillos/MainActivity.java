@@ -23,6 +23,7 @@ import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.example.com.rottentomatillos.data.TomatilloDBHelper;
 import android.example.com.rottentomatillos.data.TomatilloContract.Movie;
+import android.widget.TextView;
 
 /**
  * This is the main activity for the RottenTomatillos App.
@@ -79,5 +80,9 @@ public class MainActivity extends ActionBarActivity {
                 // Do nothing if the movie is already there.
             }
         }
+
+        TextView textView = (TextView)findViewById(R.id.tomatillo_text_view);
+        textView.setText("");
+
     }
 }
