@@ -15,6 +15,7 @@
  */
 package android.example.com.rottentomatillos;
 
+import android.example.com.rottentomatillos.data.TomatilloDBHelper;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 
@@ -27,5 +28,7 @@ public class MainActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        TomatilloDBHelper dbHelper = new TomatilloDBHelper(this);
     }
 }
