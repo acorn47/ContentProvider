@@ -15,6 +15,7 @@
  */
 package android.example.com.rottentomatillos.data;
 
+import android.net.Uri;
 import android.provider.BaseColumns;
 
 /**
@@ -22,8 +23,18 @@ import android.provider.BaseColumns;
  * URIs, and MIME types.
  */
 public class TomatilloContract {
-    public static final class Movie implements BaseColumns{
+    /**
+     * The String storing the content authority for the URI and database
+     */
+    public static final String CONTENT_AUTHORITY = "com.example.android.rottentomatillos.provider";
 
+    /**
+     * The base URI to build off of which apps will use to contact
+     * the content provider.
+     */
+    public static final Uri BASE_CONTENT_URI = Uri.parse("content://" + CONTENT_AUTHORITY);
+
+    public static final class Movie implements BaseColumns{
         /**
          * Name of the Movie table.
          */
@@ -41,5 +52,10 @@ public class TomatilloContract {
          */
         public static final String RATING = "rating";
 
+        /**
+         * Base Uri for the Movie table.
+         */
+        public static final Uri CONTENT_URI =
+                BASE_CONTENT_URI.buildUpon().appendPath(TABLE_NAME).build();
     }
 }
