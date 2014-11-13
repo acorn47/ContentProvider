@@ -15,6 +15,7 @@
  */
 package android.example.com.rottentomatillos;
 
+import android.database.sqlite.SQLiteDatabase;
 import android.example.com.rottentomatillos.data.TomatilloDBHelper;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
@@ -29,6 +30,10 @@ public class MainActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // Create a DBHelper
         TomatilloDBHelper dbHelper = new TomatilloDBHelper(this);
+        // Get a WritableDatabase, this is when the database is actually created if it does not
+        // already exist.
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
     }
 }
