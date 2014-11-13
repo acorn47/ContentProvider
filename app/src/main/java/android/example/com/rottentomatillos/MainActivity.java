@@ -71,6 +71,7 @@ public class MainActivity extends ActionBarActivity {
             ContentValues values = new ContentValues();
             values.put(Movie.TITLE, titles[i]);
             values.put(Movie.RATING, ratings[i]);
+
             // Insert the movie and catch the exception if it's already in the database.
             try {
                 db.insertOrThrow(Movie.TABLE_NAME, null, values);
@@ -86,10 +87,8 @@ public class MainActivity extends ActionBarActivity {
         textView.setText("");
 
         // Read from the database only the Title and Rating columns
-        Cursor cursor = db.query(
-                Movie.TABLE_NAME,
-                new String[]{Movie.TITLE, Movie.RATING},
-                null, null, null, null, null);
+        Cursor cursor = getContentResolver().query(
+                Movie.CONTENT_URI, new String[]{ Movie.TITLE, Movie.RATING }, null, null, null);
 
         // Try block so that we can have a "finally" block to close the cursor.
         try {

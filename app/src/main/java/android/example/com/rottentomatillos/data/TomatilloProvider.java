@@ -18,6 +18,8 @@ package android.example.com.rottentomatillos.data;
 import android.content.ContentProvider;
 import android.content.ContentValues;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.example.com.rottentomatillos.data.TomatilloContract.Movie;
 import android.net.Uri;
 
 /**
@@ -41,7 +43,17 @@ public class TomatilloProvider extends ContentProvider {
     @Override
     public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs,
                         String sortOrder) {
-        return null;
+
+        if (uri.equals(Movie.CONTENT_URI)) {
+            // Use the database helper to get a readable database.
+            final SQLiteDatabase db = mDBHelper.getReadableDatabase();
+            Cursor cursor = db.query(
+                    Movie.TABLE_NAME,
+                    projection, selection, selectionArgs, null, null, sortOrder);
+            return cursor;
+        } else {
+            return null;
+        }
     }
 
     @Override
