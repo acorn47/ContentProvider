@@ -15,7 +15,9 @@
  */
 package android.example.com.rottentomatillos;
 
+import android.content.ContentValues;
 import android.database.sqlite.SQLiteDatabase;
+import android.example.com.rottentomatillos.data.TomatilloContract.Movie;
 import android.example.com.rottentomatillos.data.TomatilloDBHelper;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
@@ -35,5 +37,13 @@ public class MainActivity extends ActionBarActivity {
         // Get a WritableDatabase, this is when the database is actually created if it does not
         // already exist.
         SQLiteDatabase db = dbHelper.getWritableDatabase();
+
+        // Create the values for one movie
+        ContentValues values = new ContentValues();
+        values.put(Movie.TITLE, "Eternal Sunshine of the Spotless Mind");
+        values.put(Movie.RATING, 5);
+
+        // Insert the Movie
+        db.insert(Movie.TABLE_NAME, null, values);
     }
 }
