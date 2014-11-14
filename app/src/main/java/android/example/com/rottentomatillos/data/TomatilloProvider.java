@@ -51,23 +51,29 @@ public class TomatilloProvider extends ContentProvider {
                     projection, selection, selectionArgs, null, null, sortOrder);
             return cursor;
         }
-
-        // Allows us to parse an id from a uri if it has one.
-        // Throws UnsupportedOperationException if this isn't a hierarchical URI
-        // and Throws NumberFormatException if the last segment isn't a number
-        long id = ContentUris.parseId(uri);
-        if (uri.equals(ContentUris.withAppendedId(Movie.CONTENT_URI,id))) {
-            SQLiteDatabase db = mDBHelper.getReadableDatabase();
-            Cursor cursor = db.query(
-                    Movie.TABLE_NAME,
-                    projection,
-                    Movie._ID + " = ?",
-                    new String[]{String.valueOf(id)},
-                    null,
-                    null,
-                    sortOrder
-            );
-            return cursor;
+        long id;
+        try {
+            // Allows us to parse an id from a uri if it has one.
+            // Throws UnsupportedOperationException if this isn't a hierarchical URI
+            // and Throws NumberFormatException if the last segment isn't a number
+            id = ContentUris.parseId(uri);
+            if (uri.equals(ContentUris.withAppendedId(Movie.CONTENT_URI,id))) {
+                SQLiteDatabase db = mDBHelper.getReadableDatabase();
+                Cursor cursor = db.query(
+                        Movie.TABLE_NAME,
+                        projection,
+                        Movie._ID + " = '?'",
+                        new String[]{String.valueOf(id)},
+                        null,
+                        null,
+                        sortOrder
+                );
+                return cursor;
+            }
+        } catch (NumberFormatException e) {
+            return null;
+        } catch (UnsupportedOperationException e) {
+            return null;
         }
         return null;
     }
