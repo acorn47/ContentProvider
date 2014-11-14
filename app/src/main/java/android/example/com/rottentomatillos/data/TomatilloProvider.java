@@ -18,6 +18,7 @@ package android.example.com.rottentomatillos.data;
 import android.content.ContentProvider;
 import android.content.ContentUris;
 import android.content.ContentValues;
+import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.example.com.rottentomatillos.data.TomatilloContract.Movie;
@@ -34,6 +35,29 @@ public class TomatilloProvider extends ContentProvider {
      * This helps us create and gain access to the SQLiteDatabase.
      */
     private TomatilloDBHelper mDBHelper;
+
+    // URI Matcher Codes
+    private static final int MOVIE = 100;
+    private static final int MOVIE_WITH_ID = 101;
+
+    private static final UriMatcher sUriMatcher = buildUriMatcher();
+
+    /**
+     * Builds a UriMatcher object for the movie database URIs.
+     */
+    private static UriMatcher buildUriMatcher() {
+        // All paths added to the UriMatcher have a corresponding code to return when a match is
+        // found.  The code passed into the constructor represents the code to return for the root
+        // URI.  It's common to use NO_MATCH as the code for this case.
+        final UriMatcher matcher = new UriMatcher(UriMatcher.NO_MATCH);
+
+        // For each type of URI you want to add, create a corresponding code. Note that UriMatchers
+        // Need your content authority.
+        matcher.addURI(TomatilloContract.CONTENT_AUTHORITY, Movie.TABLE_NAME, MOVIE);
+        matcher.addURI(TomatilloContract.CONTENT_AUTHORITY, Movie.TABLE_NAME + "/#", MOVIE_WITH_ID);
+
+        return matcher;
+    }
 
     @Override
     public boolean onCreate() {
