@@ -20,9 +20,11 @@ import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.UriMatcher;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteConstraintException;
 import android.database.sqlite.SQLiteDatabase;
 import android.example.com.rottentomatillos.data.TomatilloContract.Movie;
 import android.net.Uri;
+import android.util.Log;
 
 /**
  * This is a ContentProvider for the movie rating database. This content provider
@@ -30,6 +32,8 @@ import android.net.Uri;
  * access to the movie database.
  */
 public class TomatilloProvider extends ContentProvider {
+
+    public static final String LOG_TAG = TomatilloProvider.class.getSimpleName();
 
     /**
      * This helps us create and gain access to the SQLiteDatabase.
@@ -107,7 +111,27 @@ public class TomatilloProvider extends ContentProvider {
 
     @Override
     public Uri insert(Uri uri, ContentValues contentValues) {
-        return null;
+        switch (sUriMatcher.match(uri)) {
+            case MOVIE: {
+                long id = -1;
+                // Insert the movie and catch the exception if it's already in the database.
+                try {
+                    id = mDBHelper.getWritableDatabase().insertOrThrow(
+                            Movie.TABLE_NAME, null, contentValues);
+                } catch (SQLiteConstraintException e) {
+                    Log.i(LOG_TAG,
+                            "Trying to insert " + contentValues.getAsString(Movie.TITLE) +
+                                    " but it's already in the database."
+                    );
+                    // Do nothing if the movie is already there.
+                }
+                if (id == -1) return null; // it failed!
+                return ContentUris.withAppendedId(Movie.CONTENT_URI, id);
+            }
+            default: {
+                throw new UnsupportedOperationException("Unknown uri: " + uri);
+            }
+        }
     }
 
     @Override
