@@ -68,38 +68,36 @@ public class TomatilloProvider extends ContentProvider {
     @Override
     public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs,
                         String sortOrder) {
-        if (uri.equals(Movie.CONTENT_URI)) {
-            SQLiteDatabase db = mDBHelper.getReadableDatabase();
-            Cursor cursor = db.query(
-                    Movie.TABLE_NAME,
-                    projection, selection, selectionArgs, null, null, sortOrder);
-            return cursor;
-        }
-        long id;
-        try {
-            // Allows us to parse an id from a uri if it has one.
-            // Throws UnsupportedOperationException if this isn't a hierarchical URI
-            // and Throws NumberFormatException if the last segment isn't a number
-            id = ContentUris.parseId(uri);
-            if (uri.equals(ContentUris.withAppendedId(Movie.CONTENT_URI,id))) {
-                SQLiteDatabase db = mDBHelper.getReadableDatabase();
+        SQLiteDatabase db = mDBHelper.getReadableDatabase();
+
+        // Get the constant integer representing the uri type and use in the switch statement.
+        switch (sUriMatcher.match(uri)) {
+            // Case where all movie ratings are selected
+            case MOVIE: {
+                Cursor cursor = db.query(
+                        Movie.TABLE_NAME,
+                        projection, selection, selectionArgs, null, null, sortOrder);
+                return cursor;
+            }
+            // Case with only one movie rating selected, by ID
+            case MOVIE_WITH_ID: {
                 Cursor cursor = db.query(
                         Movie.TABLE_NAME,
                         projection,
-                        Movie._ID + " = '?'",
-                        new String[]{String.valueOf(id)},
+                        Movie._ID + " = ?",
+                        new String[]{String.valueOf(ContentUris.parseId(uri))},
+
                         null,
                         null,
                         sortOrder
                 );
                 return cursor;
             }
-        } catch (NumberFormatException e) {
-            return null;
-        } catch (UnsupportedOperationException e) {
-            return null;
+            default: {
+                // In the default case, the uri must have been bad
+                throw new UnsupportedOperationException("Unknown uri: " + uri);
+            }
         }
-        return null;
     }
 
     @Override
