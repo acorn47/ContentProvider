@@ -155,7 +155,15 @@ public class TomatilloProvider extends ContentProvider {
      * 2. The rating is not between 1 and 5.
      */
     private static void checkInput(ContentValues values) {
-        // -- YOUR CODE BELOW HERE -- //
-    }
+        if (values == null) {
+            throw new IllegalArgumentException("Cannot have null content values");
+        }
 
+        Integer rating = values.getAsInteger(Movie.RATING);
+
+        if ((rating != null) && (rating.intValue() < 1 || rating.intValue() > 5)) {
+            throw new IllegalArgumentException("The rating " +
+                   rating + " is not between 1 and 5.");
+        }
+    }
 }
