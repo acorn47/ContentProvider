@@ -126,6 +126,9 @@ public class TomatilloProvider extends ContentProvider {
                     // Do nothing if the movie is already there.
                 }
                 if (id == -1) return null; // it failed!
+                // Only call if the insert succeeded. This statement notifies anything watching
+                // that the data at this specific uri was changed.
+                getContext().getContentResolver().notifyChange(uri, null);
                 return ContentUris.withAppendedId(Movie.CONTENT_URI, id);
             }
             default: {
