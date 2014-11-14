@@ -111,6 +111,8 @@ public class TomatilloProvider extends ContentProvider {
 
     @Override
     public Uri insert(Uri uri, ContentValues contentValues) {
+        checkInput(contentValues);
+
         switch (sUriMatcher.match(uri)) {
             case MOVIE: {
                 long id = -1;
@@ -146,4 +148,14 @@ public class TomatilloProvider extends ContentProvider {
     public int update(Uri uri, ContentValues contentValues, String selection, String[] selectionArgs) {
         return 0;
     }
+
+    /**
+     * Checks whether values can be inserted in the database. Throws IllegalArgumentException if:
+     * 1. Values is null
+     * 2. The rating is not between 1 and 5.
+     */
+    private static void checkInput(ContentValues values) {
+        // -- YOUR CODE BELOW HERE -- //
+    }
+
 }
