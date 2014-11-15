@@ -43,8 +43,12 @@ public class ApplicationTest extends ApplicationTestCase<Application> {
         super.setUp();
         deleteAllRecords();
     }
-
-    // TODO Add your code here for tearDown.
+    
+    @Override
+    protected void tearDown() throws Exception {
+        super.tearDown();
+        deleteAllRecords();
+    }
 
     /**
      * Tests {@link TomatilloProvider}'s query method with an empty table.
@@ -52,9 +56,7 @@ public class ApplicationTest extends ApplicationTestCase<Application> {
     public void testQueryEmptyTable(){
         // Table queried should be empty since setup was called and everything was destroyed in
         // the table.
-
-        // TODO Add your code here.
-
+        assertResultCount(Movie.CONTENT_URI, 0);
     }
 
     /**
@@ -101,14 +103,32 @@ public class ApplicationTest extends ApplicationTestCase<Application> {
      * Tests {@link TomatilloProvider}'s insert method with a null entry.
      */
     public void testInsertNull() {
-        // TODO Add your code here.
+        // Insert the values.
+        try {
+            mContext.getContentResolver().insert(
+                    Movie.CONTENT_URI, null);
+            fail("Insert with null should throw IllegalArgumentException");
+        } catch (IllegalArgumentException e) {
+            // The expected case.
+        }
     }
 
     /**
      * Tests {@link TomatilloProvider}'s insert method with an invalid rating.
      */
     public void testInsertInvalidRating() {
-        // TODO Add your code here.
+        ContentValues values = new ContentValues();
+        values.put(Movie.TITLE, "Pulp Fiction");
+        values.put(Movie.RATING, 6);
+
+        // Insert the values.
+        try {
+            mContext.getContentResolver().insert(
+                    Movie.CONTENT_URI, values);
+            fail("Insert with invalid number should throw an IllegalArgumentException");
+        } catch (IllegalArgumentException e) {
+            // The expected case.
+        }
     }
 
     /**
@@ -130,7 +150,15 @@ public class ApplicationTest extends ApplicationTestCase<Application> {
      * Tests {@link TomatilloProvider}'s insert method with a missing title.
      */
     public void testInsertTitleNull() {
-        // TODO Add your code here.
+        ContentValues values = new ContentValues();
+        values.put(Movie.RATING, 5);
+
+        // Note how we do not store a title in values.
+        Uri uri = mContext.getContentResolver().insert(
+                Movie.CONTENT_URI, values);
+
+        // A failed insert will return null.
+        assertNull("URI is not null even though no title given", uri);
     }
 
     /**
