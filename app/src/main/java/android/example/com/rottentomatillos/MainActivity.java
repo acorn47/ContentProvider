@@ -55,15 +55,16 @@ public class MainActivity extends ActionBarActivity {
                 "Akira",
                 "Some Like It Hot"};
         int[] ratings = new int[]{5,5,1,2,3,5,5,4,3,4};
+        ContentValues[] ratingsArr = new ContentValues[ratings.length];
 
         // Go through the arrays and make all of the movies, finally insert into the database.
         for (int i = 0; i < titles.length; i++) {
-            ContentValues values = new ContentValues();
-            values.put(Movie.TITLE, titles[i]);
-            values.put(Movie.RATING, ratings[i]);
-            getContentResolver().insert(Movie.CONTENT_URI, values);
+            ratingsArr[i] = new ContentValues();
+            ratingsArr[i].put(Movie.TITLE, titles[i]);
+            ratingsArr[i].put(Movie.RATING, ratings[i]);
         }
 
+        getContentResolver().bulkInsert(Movie.CONTENT_URI, ratingsArr);
         TextView textView = (TextView)findViewById(R.id.tomatillo_text_view);
         textView.setText("");
 
