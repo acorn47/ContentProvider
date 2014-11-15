@@ -176,7 +176,7 @@ public class ApplicationTest extends ApplicationTestCase<Application> {
     /**
      * Tests {@link TomatilloProvider}'s bulk insert method.
      */
-    /*public void testBulkInsert() {
+    public void testBulkInsert() {
         ContentValues[] values = createDummyDataArray();
 
         mContext.getContentResolver().bulkInsert(Movie.CONTENT_URI, values);
@@ -198,7 +198,7 @@ public class ApplicationTest extends ApplicationTestCase<Application> {
         } finally {
             cursor.close();
         }
-    }*/
+    }
 
     /**
      * Tests {@link TomatilloProvider}'s delete method by

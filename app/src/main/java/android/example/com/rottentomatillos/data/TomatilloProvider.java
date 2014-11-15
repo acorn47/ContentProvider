@@ -150,6 +150,56 @@ public class TomatilloProvider extends ContentProvider {
     }
 
     @Override
+    public int bulkInsert(Uri uri, ContentValues[] values) {
+        final SQLiteDatabase db = mDBHelper.getWritableDatabase();
+        final int match = sUriMatcher.match(uri);
+        switch (match) {
+            case MOVIE:
+
+                // Allows you to issue multiple transactions and then have them executed in a batch
+                db.beginTransaction();
+
+                // Counts the number of inserts that are successful
+                int numberInserted = 0;
+                try {
+                    for (ContentValues value : values) {
+                        // Check the data is okay
+                        checkInput(value);
+                        // Try to insert
+                        long id = -1;
+                        try {
+                            id = db.insertOrThrow(Movie.TABLE_NAME, null, value);
+                        } catch (SQLiteConstraintException e) {
+                            Log.i(LOG_TAG,
+                                    "Trying to insert " + value.getAsString(Movie.TITLE) +
+                                            " but it's already in the database."
+                            );
+                            // Do nothing if the movie is already there.
+                        }
+                        // As long as the insert didn't fail, increment the numberInserted
+                        if (id != -1) {
+                            numberInserted++;
+                        }
+                    }
+                    // If you get to the end without an exception, set the transaction as successful
+                    // No further database operations should be done after this call.
+                    db.setTransactionSuccessful();
+                } finally {
+                    // Causes all of the issued transactions to occur at once
+                    db.endTransaction();
+                }
+                if (numberInserted > 0) {
+                    // Notifies the content resolver that the underlying data has changed
+                    getContext().getContentResolver().notifyChange(uri, null);
+                }
+                return numberInserted;
+            default:
+                // The default case is not optimized
+                return super.bulkInsert(uri, values);
+        }
+    }
+
+    @Override
     public int delete(Uri uri, String selection, String[] selectionArgs) {
         final SQLiteDatabase db = mDBHelper.getWritableDatabase();
         final int match = sUriMatcher.match(uri);
