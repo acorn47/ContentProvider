@@ -19,12 +19,11 @@ import android.app.Application;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
+import android.example.com.rottentomatillos.data.TomatilloContract.Movie;
 import android.example.com.rottentomatillos.data.TomatilloDBHelper;
+import android.example.com.rottentomatillos.data.TomatilloProvider;
 import android.net.Uri;
 import android.test.ApplicationTestCase;
-import android.example.com.rottentomatillos.data.TomatilloProvider;
-import android.example.com.rottentomatillos.data.TomatilloContract.Movie;
 
 /**
  * This is a collection of tests for the associated Content Provider. See
@@ -43,7 +42,7 @@ public class ApplicationTest extends ApplicationTestCase<Application> {
         super.setUp();
         deleteAllRecords();
     }
-    
+
     @Override
     protected void tearDown() throws Exception {
         super.tearDown();
@@ -81,12 +80,24 @@ public class ApplicationTest extends ApplicationTestCase<Application> {
     }
 
     /**
+     * Tests {@link TomatilloProvider}'s getType method with
+     * both datatypes.
+     */
+    /*public void testGetType() {
+        ContentResolver r = getContext().getContentResolver();
+        assertEquals(
+                r.getType(Movie.CONTENT_URI),
+                Movie.CONTENT_DIR_TYPE);
+        assertEquals(
+                r.getType(ContentUris.withAppendedId(Movie.CONTENT_URI, 1)),
+                Movie.CONTENT_ITEM_TYPE);
+    }*/
+
+    /**
      * Tests {@link TomatilloProvider}'s insert method with one entry.
      */
     public void testInsertOne() {
-        ContentValues values = new ContentValues();
-        values.put(Movie.TITLE, "Pulp Fiction");
-        values.put(Movie.RATING, 5);
+        ContentValues values = createDummyDataOneMovie("Pulp Fiction", 5);
 
         // Insert the values.
         Uri uri = mContext.getContentResolver().insert(
@@ -95,7 +106,7 @@ public class ApplicationTest extends ApplicationTestCase<Application> {
         // Checks that there is one value in the database
         assertResultCount(Movie.CONTENT_URI, 1);
 
-        // Get the value in the database.
+        // Assert the correct value stored in the database.
         assertCorrectStoredValues(uri, values);
     }
 
@@ -135,31 +146,188 @@ public class ApplicationTest extends ApplicationTestCase<Application> {
      * Tests {@link TomatilloProvider}'s insert method with a missing rating.
      */
     public void testInsertNullRating() {
+        // Note how we do not store a rating in values.
         ContentValues values = new ContentValues();
         values.put(Movie.TITLE, "Pulp Fiction");
 
-        // Note how we do not store a rating in values.
         Uri uri = mContext.getContentResolver().insert(
                 Movie.CONTENT_URI, values);
 
         // A failed insert will return null.
-        assertNull("URI is not null even though no rating was given", uri);
+        assertNull("URI is not null, but it should be because no rating was given", uri);
     }
 
     /**
      * Tests {@link TomatilloProvider}'s insert method with a missing title.
      */
     public void testInsertTitleNull() {
+        // Note how we do not store a title in values.
         ContentValues values = new ContentValues();
         values.put(Movie.RATING, 5);
 
-        // Note how we do not store a title in values.
         Uri uri = mContext.getContentResolver().insert(
                 Movie.CONTENT_URI, values);
 
         // A failed insert will return null.
-        assertNull("URI is not null even though no title given", uri);
+        assertNull("URI is not null, but it should be because no title was given", uri);
     }
+
+
+    /**
+     * Tests {@link TomatilloProvider}'s bulk insert method.
+     */
+    /*public void testBulkInsert() {
+        ContentValues[] values = createDummyDataArray();
+
+        mContext.getContentResolver().bulkInsert(Movie.CONTENT_URI, values);
+
+        // Create a cursor containing only the ids
+        Cursor cursor = mContext.getContentResolver().query(
+                Movie.CONTENT_URI, new String[] { Movie._ID }, null, null, null);
+
+        try {
+            assertEquals(cursor.getCount(), 2);
+            cursor.moveToFirst();
+            int i = 1;
+            while (cursor.moveToNext()) {
+                assertCorrectStoredValues(
+                        ContentUris.withAppendedId(Movie.CONTENT_URI, cursor.getLong(0)),
+                        values[i]);
+                i--;
+            }
+        } finally {
+            cursor.close();
+        }
+    }*/
+
+    /**
+     * Tests {@link TomatilloProvider}'s delete method by
+     * deleting the last entry in the table.
+     */
+    /*public void testDeleteLastEntry() {
+        ContentValues[] values = createDummyDataArray();
+        insertDummyData(values);
+
+        Cursor cursor1 = mContext.getContentResolver().query(
+                Movie.CONTENT_URI,
+                new String[] { Movie._ID, Movie.RATING },
+                null, null, null);
+
+        long id = -1;
+        try {
+            assertEquals(cursor1.getCount(), 2);
+            cursor1.moveToLast();
+            id = cursor1.getLong(0);
+        } finally {
+            cursor1.close();
+        }
+
+        int rowsDeleted = mContext.getContentResolver().delete(
+                ContentUris.withAppendedId(Movie.CONTENT_URI, id),
+                null, null);
+        assertEquals(rowsDeleted, 1);
+
+        //Make sure that the id was actually set
+        assertNotSame(id, -1);
+        assertResultCount(ContentUris.withAppendedId(Movie.CONTENT_URI, id),
+                0);
+    }*/
+
+    /**
+     * Tests {@link TomatilloProvider}'s delete method by deleting all records and the testing that
+     * there are no records.
+     */
+    /*public void testDeleteAllRecords() {
+        deleteAllRecords();
+        assertResultCount(Movie.CONTENT_URI, 0);
+    }*/
+
+    /**
+     * Tests {@link TomatilloProvider}'s update by changing one value in one row.
+     */
+    /*public void testUpdateOneEntry() {
+        ContentValues[] values = createDummyDataArray();
+        insertDummyData(values);
+
+        Cursor cursor = mContext.getContentResolver().query(
+                Movie.CONTENT_URI,
+                new String[] { Movie._ID},
+                null, null, null);
+        long id = -1;
+        try {
+            assertEquals(cursor.getCount(), 2);
+            if (cursor.moveToFirst()) {
+                // Based off of the index of the projection, _ID is 0
+                id = cursor.getLong(0);
+            }
+        } finally {
+            cursor.close();
+        }
+        // Make sure the ID was set.
+        assertNotSame(id, -1);
+        ContentValues valuesUpdated = new ContentValues();
+        valuesUpdated.put(Movie.RATING, 1);
+
+        int rowsUpdated = mContext.getContentResolver().update(
+                ContentUris.withAppendedId(Movie.CONTENT_URI, id),
+                valuesUpdated, null, null);
+        assertEquals(rowsUpdated, 1);
+        assertCorrectStoredValues(ContentUris.withAppendedId(Movie.CONTENT_URI, id), valuesUpdated);
+    }*/
+
+    /**
+     * Tests {@link TomatilloProvider}'s update by changing multiple entries.
+     */
+    /*public void testUpdateMultipleEntries() {
+        ContentValues[] values = createDummyDataArray();
+        insertDummyData(values);
+        ContentValues valuesUpdated = new ContentValues();
+        int updatedRating = 1;
+        valuesUpdated.put(Movie.RATING, updatedRating);
+
+        // Put the values in updatedRating into every rating field of Movies.
+        int rowsUpdated = mContext.getContentResolver().update(
+                Movie.CONTENT_URI, valuesUpdated, null, null);
+        // Make sure the assert worked.
+        assertEquals(rowsUpdated, values.length);
+
+        Cursor cursor = mContext.getContentResolver().query(
+                Movie.CONTENT_URI,
+                new String[] { Movie._ID, Movie.RATING },
+                null, null, null);
+
+        try {
+            cursor.moveToFirst();
+            // Assert that every rating was updated to the value of updatedRating.
+            while(cursor.moveToNext()) {
+                int newMovies = cursor.getInt(1);
+                assertEquals(newMovies, updatedRating);
+            }
+        } finally {
+            cursor.close();
+        }
+    }*/
+
+    /**
+     * Tests {@link TomatilloProvider}'s update by trying to change an entry to an invalid value.
+     */
+    /*public void testUpdateInvalid() {
+        ContentValues[] values = createDummyDataArray();
+        insertDummyData(values);
+
+        ContentValues value = new ContentValues();
+        value.put(Movie.RATING, -4);
+
+        // Put the invalid updated rating value in the database
+        try {
+            mContext.getContentResolver().update(
+                    ContentUris.withAppendedId(Movie.CONTENT_URI, 0),
+                    value, null, null);
+            fail("Update with invalid rating should throw IllegalArgumentException");
+        } catch (IllegalArgumentException e) {
+            // The expected case.
+        }
+    }*/
 
     /**
      * Helper Methods are below
@@ -169,21 +337,59 @@ public class ApplicationTest extends ApplicationTestCase<Application> {
      * Helper method to delete all of the record in the database.
      */
     public void deleteAllRecords() {
-        SQLiteDatabase db = new TomatilloDBHelper(mContext).getWritableDatabase();
-        // Because we haven't finished the content provide delete, we'll just do the database's
-        // method. This will need to be changed.
-        db.delete(
+        new TomatilloDBHelper(mContext).getWritableDatabase().delete(
                 Movie.TABLE_NAME,
                 null,
-                null
-        );
+                null);
+
+        // TODO to be used when your delete method is working in your ContentProvider.
+        /*
+        mContext.getContentResolver().delete(
+                Movie.CONTENT_URI,
+                null,
+                null);
+                */
+    }
+
+    /**
+     * Helper method to create one row of data in the database to help perform further tests.
+     */
+    private ContentValues createDummyDataOneMovie(String title, int rating) {
+        ContentValues values = new ContentValues();
+        values.put(Movie.TITLE, title);
+        values.put(Movie.RATING, rating);
+        return values;
+    }
+
+    /**
+     * Helper method to create data for rows in the database to help perform further tests.
+     */
+    private ContentValues[] createDummyDataArray() {
+        ContentValues[] valuesArr = new ContentValues[2];
+        valuesArr[0] = createDummyDataOneMovie("Pulp Fiction", 5);
+        valuesArr[1] = createDummyDataOneMovie("Forrest Gump", 4);
+        return valuesArr;
+    }
+
+    /**
+     * Helper method to create data for rows in the database and insert to help perform
+     * further tests.
+     */
+    private Uri[] insertDummyData(ContentValues[] values) {
+        if (values == null) return null;
+        Uri[] uris = new Uri[values.length];
+        for(int i = 0; i < values.length; i++) {
+            uris[i] = mContext.getContentResolver().insert(
+                    Movie.CONTENT_URI, values[i]);
+        }
+        return uris;
     }
 
     /**
      * Helper method to test whether the number of objects returned in a query matches the
      * expected amount in the table.
      */
-    public void assertResultCount(Uri uri, String[] projection, String selection,
+    private void assertResultCount(Uri uri, String[] projection, String selection,
                                   String[] selectionArgs, int expectedCount) {
         Cursor cursor = mContext.getContentResolver().query(uri, projection, selection,
                 selectionArgs, null);
@@ -209,9 +415,7 @@ public class ApplicationTest extends ApplicationTestCase<Application> {
     private void assertCorrectStoredValues(Uri uri, ContentValues values) {
         Cursor cursor = mContext.getContentResolver().query(uri,
                 new String[] {
-                        Movie._ID,
-                        Movie.TITLE,
-                        Movie.RATING },
+                        Movie._ID, Movie.TITLE, Movie.RATING },
                 null, null, null);
         try {
             // Assert there is only one entry.
@@ -221,22 +425,13 @@ public class ApplicationTest extends ApplicationTestCase<Application> {
             cursor.moveToFirst();
             //If it contains the key, assert the value is the same.
             if (values.containsKey(Movie._ID)) {
-                assertEquals(
-                        new Long(cursor.getLong(0)),
-                        values.getAsLong(Movie._ID)
-                );
+                assertEquals(new Long(cursor.getLong(0)), values.getAsLong(Movie._ID));
             }
             if (values.containsKey(Movie.TITLE)) {
-                assertEquals(
-                        cursor.getString(1),
-                        values.getAsString(Movie.TITLE)
-                );
+                assertEquals(cursor.getString(1), values.getAsString(Movie.TITLE));
             }
             if (values.containsKey(Movie.RATING)) {
-                assertEquals(
-                        new Integer(cursor.getInt(2)),
-                        values.getAsInteger(Movie.RATING)
-                );
+                assertEquals(new Integer(cursor.getInt(2)), values.getAsInteger(Movie.RATING));
             }
         } finally {
             cursor.close();
