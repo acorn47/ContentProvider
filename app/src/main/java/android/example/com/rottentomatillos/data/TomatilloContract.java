@@ -57,5 +57,16 @@ public class TomatilloContract {
          */
         public static final Uri CONTENT_URI =
                 BASE_CONTENT_URI.buildUpon().appendPath(TABLE_NAME).build();
+
+        /**
+         * The MIME type for a list of movie ratings.
+         */
+        public static final String CONTENT_DIR_TYPE =
+                "vnd.android.cursor.dir/" + CONTENT_AUTHORITY + "/" + TABLE_NAME;
+        /**
+         * The MIME type for a single movie rating.
+         */
+        public static final String CONTENT_ITEM_TYPE =
+                "vnd.android.cursor.item/" + CONTENT_AUTHORITY + "/" + TABLE_NAME;
     }
 }
