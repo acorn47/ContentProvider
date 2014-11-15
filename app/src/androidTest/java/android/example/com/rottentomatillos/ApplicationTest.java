@@ -16,6 +16,7 @@
 package android.example.com.rottentomatillos;
 
 import android.app.Application;
+import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.database.Cursor;
@@ -82,7 +83,7 @@ public class ApplicationTest extends ApplicationTestCase<Application> {
      * Tests {@link TomatilloProvider}'s getType method with
      * both datatypes.
      */
-    /*public void testGetType() {
+    public void testGetType() {
         ContentResolver r = getContext().getContentResolver();
         assertEquals(
                 r.getType(Movie.CONTENT_URI),
@@ -90,7 +91,7 @@ public class ApplicationTest extends ApplicationTestCase<Application> {
         assertEquals(
                 r.getType(ContentUris.withAppendedId(Movie.CONTENT_URI, 1)),
                 Movie.CONTENT_ITEM_TYPE);
-    }*/
+    }
 
     /**
      * Tests {@link TomatilloProvider}'s insert method with one entry.

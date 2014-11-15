@@ -106,7 +106,17 @@ public class TomatilloProvider extends ContentProvider {
 
     @Override
     public String getType(Uri uri) {
-        return null;
+        switch (sUriMatcher.match(uri)) {
+            case MOVIE: {
+                return Movie.CONTENT_DIR_TYPE;
+            }
+            case MOVIE_WITH_ID: {
+                return Movie.CONTENT_ITEM_TYPE;
+            }
+            default: {
+                throw new UnsupportedOperationException("Unknown uri: " + uri);
+            }
+        }
     }
 
     @Override
