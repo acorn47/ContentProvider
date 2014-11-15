@@ -141,7 +141,29 @@ public class TomatilloProvider extends ContentProvider {
 
     @Override
     public int delete(Uri uri, String selection, String[] selectionArgs) {
-        return 0;
+        final SQLiteDatabase db = mDBHelper.getWritableDatabase();
+        final int match = sUriMatcher.match(uri);
+        int numberDeleted;
+        switch (match) {
+            case MOVIE:
+                numberDeleted = db.delete(
+                        Movie.TABLE_NAME, selection, selectionArgs);
+                break;
+            case MOVIE_WITH_ID:
+                numberDeleted = db.delete(
+                        Movie.TABLE_NAME,
+                        Movie._ID + " = ?",
+                        new String[]{String.valueOf(ContentUris.parseId(uri))});
+                break;
+            default:
+                throw new UnsupportedOperationException("Unknown uri: " + uri);
+        }
+
+        // The first condition works because a null deletes all rows
+        if (selection == null || numberDeleted != 0) {
+            getContext().getContentResolver().notifyChange(uri, null);
+        }
+        return numberDeleted;
     }
 
     @Override

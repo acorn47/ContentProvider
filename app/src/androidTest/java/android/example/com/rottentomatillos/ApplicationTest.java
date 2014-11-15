@@ -20,7 +20,6 @@ import android.content.ContentUris;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.example.com.rottentomatillos.data.TomatilloContract.Movie;
-import android.example.com.rottentomatillos.data.TomatilloDBHelper;
 import android.example.com.rottentomatillos.data.TomatilloProvider;
 import android.net.Uri;
 import android.test.ApplicationTestCase;
@@ -204,7 +203,7 @@ public class ApplicationTest extends ApplicationTestCase<Application> {
      * Tests {@link TomatilloProvider}'s delete method by
      * deleting the last entry in the table.
      */
-    /*public void testDeleteLastEntry() {
+    public void testDeleteLastEntry() {
         ContentValues[] values = createDummyDataArray();
         insertDummyData(values);
 
@@ -231,16 +230,16 @@ public class ApplicationTest extends ApplicationTestCase<Application> {
         assertNotSame(id, -1);
         assertResultCount(ContentUris.withAppendedId(Movie.CONTENT_URI, id),
                 0);
-    }*/
+    }
 
     /**
      * Tests {@link TomatilloProvider}'s delete method by deleting all records and the testing that
      * there are no records.
      */
-    /*public void testDeleteAllRecords() {
+    public void testDeleteAllRecords() {
         deleteAllRecords();
         assertResultCount(Movie.CONTENT_URI, 0);
-    }*/
+    }
 
     /**
      * Tests {@link TomatilloProvider}'s update by changing one value in one row.
@@ -337,18 +336,10 @@ public class ApplicationTest extends ApplicationTestCase<Application> {
      * Helper method to delete all of the record in the database.
      */
     public void deleteAllRecords() {
-        new TomatilloDBHelper(mContext).getWritableDatabase().delete(
-                Movie.TABLE_NAME,
-                null,
-                null);
-
-        // TODO to be used when your delete method is working in your ContentProvider.
-        /*
         mContext.getContentResolver().delete(
                 Movie.CONTENT_URI,
                 null,
                 null);
-                */
     }
 
     /**
