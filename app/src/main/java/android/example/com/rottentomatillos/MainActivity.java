@@ -28,6 +28,9 @@ import android.widget.ListView;
  */
 public class MainActivity extends ActionBarActivity {
     public static final String LOG_TAG = MainActivity.class.getSimpleName();
+    
+    // Identifies a particular Loader being used in this component.
+    private static final int CURSOR_LOADER_ID = 0;
 
     // For the SimpleCursorAdapter to match the TomatilloProvider columns to layout items.
     private static final String[] COLUMNS_TO_BE_BOUND  = new String[] {
