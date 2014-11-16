@@ -19,8 +19,9 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.example.com.rottentomatillos.data.TomatilloContract.Movie;
 import android.os.Bundle;
+import android.support.v4.widget.SimpleCursorAdapter;
 import android.support.v7.app.ActionBarActivity;
-import android.widget.TextView;
+import android.widget.ListView;
 
 /**
  * This is the main activity for the RottenTomatillos App.
@@ -28,11 +29,40 @@ import android.widget.TextView;
 public class MainActivity extends ActionBarActivity {
     public static final String LOG_TAG = MainActivity.class.getSimpleName();
 
+    // For the SimpleCursorAdapter to match the TomatilloProvider columns to layout items.
+    private static final String[] COLUMNS_TO_BE_BOUND  = new String[] {
+            Movie.TITLE,
+            Movie.RATING
+    };
+
+    private static final int[] LAYOUT_ITEMS_TO_FILL = new int[] {
+            android.R.id.text1,
+            android.R.id.text2
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         insertData();
+
+        // Get the ListView which will be populated with the TomatilloProvider data.
+        ListView listView = (ListView) findViewById(R.id.tomatillo_list_view);
+
+        // Get the cursor
+        Cursor cursor = getContentResolver().query(
+                Movie.CONTENT_URI, null, null, null, null);
+
+        // Set the Adapter to fill the standard two_line_list_item layout with data from the Cursor.
+        SimpleCursorAdapter adapter = new SimpleCursorAdapter(this,
+                android.R.layout.two_line_list_item,
+                cursor,
+                COLUMNS_TO_BE_BOUND,
+                LAYOUT_ITEMS_TO_FILL,
+                0);
+
+        // Attach the adapter to the ListView.
+        listView.setAdapter(adapter);
     }
 
     /**
@@ -65,23 +95,5 @@ public class MainActivity extends ActionBarActivity {
         }
 
         getContentResolver().bulkInsert(Movie.CONTENT_URI, ratingsArr);
-        TextView textView = (TextView)findViewById(R.id.tomatillo_text_view);
-        textView.setText("");
-
-        // Read from the database only the Title and Rating columns
-        Cursor cursor = getContentResolver().query(
-                Movie.CONTENT_URI, new String[]{ Movie.TITLE, Movie.RATING }, null, null, null);
-
-        // Try block so that we can have a "finally" block to close the cursor.
-        try {
-            // Note that the Title column is mapped to index 0
-            // Note that the Rating column is mapped to index 1
-            while(cursor.moveToNext()) {
-                textView.append(cursor.getString(0) + " " + cursor.getInt(1) + "/5\n");
-            }
-        } finally {
-            // Make sure to close your cursor!
-            cursor.close();
-        }
     }
 }
