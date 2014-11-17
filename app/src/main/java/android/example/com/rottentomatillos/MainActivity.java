@@ -126,6 +126,9 @@ public class MainActivity extends ActionBarActivity implements LoaderManager.Loa
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
-
+        // This method is meant to clean up a previous loader's data.
+        // For a CursorAdapter, you need to clear the adapter's reference to the Cursor.
+        // This prevents memory leaks.
+        mAdapter.changeCursor(null);
     }
 }
