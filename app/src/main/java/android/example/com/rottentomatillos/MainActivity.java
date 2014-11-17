@@ -18,6 +18,7 @@ package android.example.com.rottentomatillos;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.support.v7.app.ActionBarActivity;
@@ -104,7 +105,14 @@ public class MainActivity extends ActionBarActivity implements LoaderManager.Loa
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        return null;
+        return new CursorLoader(
+                this,
+                Movie.CONTENT_URI,
+                null,
+                null,
+                null,
+                null
+        );
     }
 
     @Override
