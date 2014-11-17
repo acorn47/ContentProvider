@@ -57,20 +57,20 @@ public class MainActivity extends ActionBarActivity implements LoaderManager.Loa
         // Get the ListView which will be populated with the TomatilloProvider data.
         ListView listView = (ListView) findViewById(R.id.tomatillo_list_view);
 
-        // Get the cursor
-        Cursor cursor = getContentResolver().query(
-                Movie.CONTENT_URI, null, null, null, null);
-
         // Set the Adapter to fill the standard two_line_list_item layout with data from the Cursor.
+        // Note that the cursor is null because data will be loaded in via a loader
         mAdapter = new SimpleCursorAdapter(this,
                 android.R.layout.two_line_list_item,
-                cursor,
+                null,
                 COLUMNS_TO_BE_BOUND,
                 LAYOUT_ITEMS_TO_FILL,
                 0);
 
         // Attach the adapter to the ListView.
         listView.setAdapter(mAdapter);
+
+        // Initializes the loader.
+        getSupportLoaderManager().initLoader(CURSOR_LOADER_ID, null, this);
     }
 
     /**
@@ -107,6 +107,8 @@ public class MainActivity extends ActionBarActivity implements LoaderManager.Loa
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        // When the LoaderManager initalizes the loader, this code is run. A CursorLoader is
+        // specifically designed to load cursors from ContentProviders.
         return new CursorLoader(
                 this,
                 Movie.CONTENT_URI,
@@ -120,7 +122,6 @@ public class MainActivity extends ActionBarActivity implements LoaderManager.Loa
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         mAdapter.changeCursor(data);
-
     }
 
     @Override
