@@ -35,6 +35,8 @@ public class MainActivity extends ActionBarActivity implements LoaderManager.Loa
     // Identifies a particular Loader being used in this component.
     private static final int CURSOR_LOADER_ID = 0;
 
+    private SimpleCursorAdapter mAdapter;
+
     // For the SimpleCursorAdapter to match the TomatilloProvider columns to layout items.
     private static final String[] COLUMNS_TO_BE_BOUND  = new String[] {
             Movie.TITLE,
@@ -60,7 +62,7 @@ public class MainActivity extends ActionBarActivity implements LoaderManager.Loa
                 Movie.CONTENT_URI, null, null, null, null);
 
         // Set the Adapter to fill the standard two_line_list_item layout with data from the Cursor.
-        SimpleCursorAdapter adapter = new SimpleCursorAdapter(this,
+        mAdapter = new SimpleCursorAdapter(this,
                 android.R.layout.two_line_list_item,
                 cursor,
                 COLUMNS_TO_BE_BOUND,
@@ -68,7 +70,7 @@ public class MainActivity extends ActionBarActivity implements LoaderManager.Loa
                 0);
 
         // Attach the adapter to the ListView.
-        listView.setAdapter(adapter);
+        listView.setAdapter(mAdapter);
     }
 
     /**
@@ -117,6 +119,7 @@ public class MainActivity extends ActionBarActivity implements LoaderManager.Loa
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        mAdapter.changeCursor(data);
 
     }
 
