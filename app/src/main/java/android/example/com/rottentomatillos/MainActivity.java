@@ -17,18 +17,20 @@ package android.example.com.rottentomatillos;
 
 import android.content.ContentValues;
 import android.database.Cursor;
-import android.example.com.rottentomatillos.data.TomatilloContract.Movie;
 import android.os.Bundle;
+import android.support.v4.content.Loader;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.support.v7.app.ActionBarActivity;
 import android.widget.ListView;
+import android.support.v4.app.LoaderManager;
+import android.example.com.rottentomatillos.data.TomatilloContract.Movie;
 
 /**
  * This is the main activity for the RottenTomatillos App.
  */
-public class MainActivity extends ActionBarActivity {
+public class MainActivity extends ActionBarActivity implements LoaderManager.LoaderCallbacks<Cursor> {
     public static final String LOG_TAG = MainActivity.class.getSimpleName();
-    
+
     // Identifies a particular Loader being used in this component.
     private static final int CURSOR_LOADER_ID = 0;
 
@@ -98,5 +100,20 @@ public class MainActivity extends ActionBarActivity {
         }
 
         getContentResolver().bulkInsert(Movie.CONTENT_URI, ratingsArr);
+    }
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        return null;
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+
     }
 }
