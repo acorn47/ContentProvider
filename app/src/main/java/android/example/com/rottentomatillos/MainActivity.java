@@ -17,14 +17,13 @@ package android.example.com.rottentomatillos;
 
 import android.content.ContentValues;
 import android.database.Cursor;
+import android.example.com.rottentomatillos.data.TomatilloContract.Movie;
 import android.os.Bundle;
+import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
-import android.support.v4.widget.SimpleCursorAdapter;
 import android.support.v7.app.ActionBarActivity;
 import android.widget.ListView;
-import android.support.v4.app.LoaderManager;
-import android.example.com.rottentomatillos.data.TomatilloContract.Movie;
 
 /**
  * This is the main activity for the RottenTomatillos App.
@@ -35,18 +34,7 @@ public class MainActivity extends ActionBarActivity implements LoaderManager.Loa
     // Identifies a particular Loader being used in this component.
     private static final int CURSOR_LOADER_ID = 0;
 
-    private SimpleCursorAdapter mAdapter;
-
-    // For the SimpleCursorAdapter to match the TomatilloProvider columns to layout items.
-    private static final String[] COLUMNS_TO_BE_BOUND  = new String[] {
-            Movie.TITLE,
-            Movie.RATING
-    };
-
-    private static final int[] LAYOUT_ITEMS_TO_FILL = new int[] {
-            android.R.id.text1,
-            android.R.id.text2
-    };
+    private RatingAdapter mAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,14 +45,8 @@ public class MainActivity extends ActionBarActivity implements LoaderManager.Loa
         // Get the ListView which will be populated with the TomatilloProvider data.
         ListView listView = (ListView) findViewById(R.id.tomatillo_list_view);
 
-        // Set the Adapter to fill the standard two_line_list_item layout with data from the Cursor.
         // Note that the cursor is null because data will be loaded in via a loader
-        mAdapter = new SimpleCursorAdapter(this,
-                android.R.layout.two_line_list_item,
-                null,
-                COLUMNS_TO_BE_BOUND,
-                LAYOUT_ITEMS_TO_FILL,
-                0);
+        mAdapter = new RatingAdapter(this, null, 0, CURSOR_LOADER_ID);
 
         // Attach the adapter to the ListView.
         listView.setAdapter(mAdapter);
