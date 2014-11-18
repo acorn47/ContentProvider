@@ -168,7 +168,37 @@ public class TomatilloProvider extends ContentProvider {
 
     @Override
     public int update(Uri uri, ContentValues contentValues, String selection, String[] selectionArgs) {
-        return 0;
+        final SQLiteDatabase db = mDBHelper.getWritableDatabase();
+        int numberUpdated = 0;
+
+        checkInput(contentValues);
+
+        switch (sUriMatcher.match(uri)) {
+            case MOVIE: {
+                numberUpdated = db.update(
+                        Movie.TABLE_NAME,
+                        contentValues,
+                        selection,
+                        selectionArgs);
+                break;
+            }
+            case MOVIE_WITH_ID: {
+                numberUpdated = db.update(
+                        Movie.TABLE_NAME,
+                        contentValues,
+                        Movie._ID + " = ?",
+                        new String[]{String.valueOf(ContentUris.parseId(uri))}
+                );
+                break;
+            }
+            default: {
+                throw new UnsupportedOperationException("Unknown uri: " + uri);
+            }
+        }
+        if (numberUpdated != 0) {
+            getContext().getContentResolver().notifyChange(uri, null);
+        }
+        return numberUpdated;
     }
 
     /**

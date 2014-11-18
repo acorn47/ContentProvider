@@ -244,7 +244,7 @@ public class ApplicationTest extends ApplicationTestCase<Application> {
     /**
      * Tests {@link TomatilloProvider}'s update by changing one value in one row.
      */
-    /*public void testUpdateOneEntry() {
+    public void testUpdateOneEntry() {
         ContentValues[] values = createDummyDataArray();
         insertDummyData(values);
 
@@ -272,12 +272,13 @@ public class ApplicationTest extends ApplicationTestCase<Application> {
                 valuesUpdated, null, null);
         assertEquals(rowsUpdated, 1);
         assertCorrectStoredValues(ContentUris.withAppendedId(Movie.CONTENT_URI, id), valuesUpdated);
-    }*/
+    }
+
 
     /**
      * Tests {@link TomatilloProvider}'s update by changing multiple entries.
      */
-    /*public void testUpdateMultipleEntries() {
+    public void testUpdateMultipleEntries() {
         ContentValues[] values = createDummyDataArray();
         insertDummyData(values);
         ContentValues valuesUpdated = new ContentValues();
@@ -305,12 +306,12 @@ public class ApplicationTest extends ApplicationTestCase<Application> {
         } finally {
             cursor.close();
         }
-    }*/
+    }
 
     /**
      * Tests {@link TomatilloProvider}'s update by trying to change an entry to an invalid value.
      */
-    /*public void testUpdateInvalid() {
+    public void testUpdateInvalid() {
         ContentValues[] values = createDummyDataArray();
         insertDummyData(values);
 
@@ -326,7 +327,7 @@ public class ApplicationTest extends ApplicationTestCase<Application> {
         } catch (IllegalArgumentException e) {
             // The expected case.
         }
-    }*/
+    }
 
     /**
      * Helper Methods are below
